@@ -2,7 +2,17 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Cropper, { Area } from "react-easy-crop";
-import { ScanFace, TriangleAlert, Loader2, RefreshCw, Sparkles, ZoomIn } from "lucide-react";
+import {
+  ScanFace,
+  TriangleAlert,
+  Loader2,
+  RefreshCw,
+  RotateCcw,
+  Sparkles,
+  Wand2,
+  ZoomIn,
+  ImageOff,
+} from "lucide-react";
 import { detectFaceBox } from "@/lib/faceDetect";
 import {
   PHOTO_ASPECT,
@@ -16,6 +26,7 @@ import {
 } from "@/lib/imageProcessing";
 
 type FaceStatus = "detecting" | "detected" | "not-detected";
+type CropSource = "auto" | "original";
 
 interface CropStudioProps {
   imageSrc: string;
@@ -23,11 +34,15 @@ interface CropStudioProps {
   onChangePhoto: () => void;
 }
 
+const INITIAL_CROP = { x: 0, y: 0 };
+const INITIAL_ZOOM = 1;
+
 export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropStudioProps) {
   const [autoCropSrc, setAutoCropSrc] = useState<string | null>(null);
   const [faceStatus, setFaceStatus] = useState<FaceStatus>("detecting");
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [cropSource, setCropSource] = useState<CropSource>("auto");
+  const [crop, setCrop] = useState(INITIAL_CROP);
+  const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Rect | null>(null);
   const [generating, setGenerating] = useState(false);
 
@@ -37,8 +52,9 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
     async function run() {
       setFaceStatus("detecting");
       setAutoCropSrc(null);
-      setCrop({ x: 0, y: 0 });
-      setZoom(1);
+      setCropSource("auto");
+      setCrop(INITIAL_CROP);
+      setZoom(INITIAL_ZOOM);
       setCroppedAreaPixels(null);
 
       const imgEl = await loadImageElement(imageSrc);
@@ -70,12 +86,30 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
     setCroppedAreaPixels(pixels);
   }, []);
 
+  // balik ke foto ASLI (belum di-precrop sama auto-detect), biar bebas atur dari 0
+  function handleResetToOriginal() {
+    setCropSource("original");
+    setCrop(INITIAL_CROP);
+    setZoom(INITIAL_ZOOM);
+    setCroppedAreaPixels(null);
+  }
+
+  // balik lagi ke hasil auto-crop yang awal (ga perlu deteksi ulang, udah ke-cache)
+  function handleBackToAuto() {
+    setCropSource("auto");
+    setCrop(INITIAL_CROP);
+    setZoom(INITIAL_ZOOM);
+    setCroppedAreaPixels(null);
+  }
+
+  const activeImage = cropSource === "original" ? imageSrc : autoCropSrc;
+
   async function handleGenerate() {
-    if (!autoCropSrc || !croppedAreaPixels) return;
+    if (!activeImage || !croppedAreaPixels) return;
     setGenerating(true);
     try {
       const finalPhoto = await getCroppedImg(
-        autoCropSrc,
+        activeImage,
         croppedAreaPixels,
         SINGLE_OUTPUT_WIDTH,
         SINGLE_OUTPUT_HEIGHT
@@ -90,9 +124,9 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
     <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
       <div className="rounded-3xl border-[3px] border-ink bg-white p-3 block-shadow">
         <div className="crop-container overflow-hidden rounded-2xl">
-          {autoCropSrc ? (
+          {activeImage ? (
             <Cropper
-              image={autoCropSrc}
+              image={activeImage}
               crop={crop}
               zoom={zoom}
               aspect={PHOTO_ASPECT}
@@ -126,23 +160,32 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
       </div>
 
       <div className="flex flex-col gap-4">
-        {faceStatus === "detecting" && (
-          <div className="flex items-center gap-2 rounded-2xl border-[3px] border-ink bg-white px-4 py-3 text-sm font-semibold block-shadow-sm">
-            <Loader2 className="h-4 w-4 animate-spin text-violet" />
-            Mendeteksi muke...
+        {cropSource === "original" ? (
+          <div className="flex items-center gap-2 rounded-2xl border-[3px] border-ink bg-sky px-4 py-3 text-sm font-semibold text-ink block-shadow-sm">
+            <ImageOff className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+            Mode manual - crop dari foto asli utuh, atur bebas dari 0
           </div>
-        )}
-        {faceStatus === "detected" && (
-          <div className="flex items-center gap-2 rounded-2xl border-[3px] border-ink bg-lime px-4 py-3 text-sm font-semibold text-ink block-shadow-sm">
-            <ScanFace className="h-4 w-4" strokeWidth={2.5} />
-            Muke terdeteksi otomatis - tinggal sesuaikan sikit yak kalau perlu
-          </div>
-        )}
-        {faceStatus === "not-detected" && (
-          <div className="flex items-center gap-2 rounded-2xl border-[3px] border-ink bg-yellow px-4 py-3 text-sm font-semibold text-ink block-shadow-sm">
-            <TriangleAlert className="h-4 w-4" strokeWidth={2.5} />
-            Muke ndaan kedetect otomatis tok, jadinye atur posisinye manual ye
-          </div>
+        ) : (
+          <>
+            {faceStatus === "detecting" && (
+              <div className="flex items-center gap-2 rounded-2xl border-[3px] border-ink bg-white px-4 py-3 text-sm font-semibold block-shadow-sm">
+                <Loader2 className="h-4 w-4 animate-spin text-violet" />
+                Mendeteksi muke...
+              </div>
+            )}
+            {faceStatus === "detected" && (
+              <div className="flex items-center gap-2 rounded-2xl border-[3px] border-ink bg-lime px-4 py-3 text-sm font-semibold text-ink block-shadow-sm">
+                <ScanFace className="h-4 w-4" strokeWidth={2.5} />
+                Muke terdeteksi otomatis - tinggal sesuaikan sikit yak kalau perlu
+              </div>
+            )}
+            {faceStatus === "not-detected" && (
+              <div className="flex items-center gap-2 rounded-2xl border-[3px] border-ink bg-yellow px-4 py-3 text-sm font-semibold text-ink block-shadow-sm">
+                <TriangleAlert className="h-4 w-4" strokeWidth={2.5} />
+                Muke ndaan kedetect otomatis tok, jadinye atur posisinye manual ye
+              </div>
+            )}
+          </>
         )}
 
         <div className="rounded-2xl border-[3px] border-ink bg-white p-4 text-sm text-ink/70 block-shadow-sm">
@@ -151,8 +194,20 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
             <li>Geser foto mun nak ngatur posisi</li>
             <li>Pakek slider atau scroll mun nak nge-zoom</li>
             <li>Pastikan kepalak  same bahu keliatan penuh dalam kotak</li>
+            {cropSource === "auto" && (
+              <li>Mun kelak hasil auto-crop kepotong ndaan pas, klik "Reset ke Foto Asli"</li>
+            )}
           </ul>
         </div>
+
+        <button
+          onClick={handleBackToAuto}
+          disabled={!autoCropSrc || cropSource === "auto"}
+          className="flex items-center justify-center gap-2 rounded-full bg-violet px-6 py-3.5 font-display text-base font-semibold text-white border-[3px] border-ink block-shadow-hover disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Wand2 className="h-5 w-5" strokeWidth={2.5} />
+          Crop Otomatis Agek ✨
+        </button>
 
         <button
           onClick={handleGenerate}
@@ -164,7 +219,16 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
           ) : (
             <Sparkles className="h-5 w-5" strokeWidth={2.5} />
           )}
-          {generating ? "Memproses..." : "Generate Foto 4x6"}
+          {generating ? "Memproses..." : "Simpan & Download"}
+        </button>
+
+        <button
+          onClick={handleResetToOriginal}
+          disabled={!imageSrc || cropSource === "original"}
+          className="flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-ink border-[3px] border-ink block-shadow-hover disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <RotateCcw className="h-4 w-4" strokeWidth={2.5} />
+          Reset ke Foto Asli
         </button>
 
         <button
