@@ -116,7 +116,7 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="border-t-[3px] border-ink py-6 text-center text-xs text-ink/50">
+      <footer className="border-t-[3px] border-ink py-4 text-center text-xs text-ink/50">
         <p>
           © 2026 Akademik dan Kemahasiswaan FMIPA Untan - Dibuat untokkan bantok mahasiswa/i FMIPA yang mane die bingung nak mengedit foto 4x6 ye.
           mun dah tau tak ape, daan pake itokpun aman men.
