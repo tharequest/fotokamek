@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --color-ink: #1b1a2e;
+  --color-paper: #fbf9ff;
+  --color-violet: #7c3aed;
+  --color-coral: #ff5d8f;
+  --color-lime: #b4f14d;
+  --color-yellow: #ffd23f;
+  --color-sky: #37b6ff;
+}
+
+@theme inline {
+  --color-ink: var(--color-ink);
+  --color-paper: var(--color-paper);
+  --color-violet: var(--color-violet);
+  --color-coral: var(--color-coral);
+  --color-lime: var(--color-lime);
+  --color-yellow: var(--color-yellow);
+  --color-sky: var(--color-sky);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+/* Neo-brutalist offset shadow blocks used throughout instead of soft
+   grey drop shadows — a deliberate, consistent accessory of the UI. */
+.block-shadow {
+  box-shadow: 6px 6px 0 0 var(--color-ink);
+}
+.block-shadow-sm {
+  box-shadow: 4px 4px 0 0 var(--color-ink);
+}
+.block-shadow-hover {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.block-shadow-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 0 var(--color-ink);
+}
+.block-shadow-hover:active {
+  transform: translate(0, 0);
+  box-shadow: 3px 3px 0 0 var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block-shadow-hover,
+  .block-shadow-hover:hover,
+  .block-shadow-hover:active {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* react-easy-crop container needs an explicit stacking context */
+.crop-container {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  background: repeating-conic-gradient(#efeaff 0% 25%, #f6f3ff 0% 50%) 50% / 24px 24px;
+}
