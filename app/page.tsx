@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
-import { Crop, ScanFace, MousePointerClick, Printer, Sparkles } from "lucide-react";
+import { ScanFace, MousePointerClick, Printer, Sparkles } from "lucide-react";
 import UploadZone from "@/components/UploadZone";
 import CropStudio from "@/components/CropStudio";
 import ResultPanel from "@/components/ResultPanel";
@@ -45,13 +46,17 @@ export default function Home() {
       <header className="border-b-[3px] border-ink bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet border-[3px] border-ink">
-              <Crop className="h-4 w-4 text-white" strokeWidth={2.5} />
-            </div>
+            <Image
+              src="/logofotokamek.png"
+              alt="Logo Fotokamek"
+              width={36}
+              height={36}
+              className="rounded-xl border-[3px] border-ink"
+          />
             <span className="font-display text-lg font-bold text-ink">FotoKamek</span>
           </div>
           <span className="hidden text-xs font-semibold text-ink/50 sm:inline">
-            untok mahasiswa FMIPA UNTAN
+            untokkan mahasiswa FMIPA UNTAN
           </span>
         </div>
       </header>
@@ -62,7 +67,7 @@ export default function Home() {
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-yellow px-3.5 py-1.5 text-xs font-semibold text-ink border-[3px] border-ink">
                 <Sparkles className="h-3.5 w-3.5" strokeWidth={2.5} />
-                Ade auto-crop pakai magic, langsung di browser
+                Ade auto-crop pakai magic, langsung di browser e
               </div>
               <h1 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
                 Foto ape ajak, pun jadi{" "}
@@ -114,7 +119,7 @@ export default function Home() {
       </main>
 
       <footer className="border-t-[3px] border-ink py-6 text-center text-xs text-ink/50">
-        Dibuat untokkan bantok mahasiswa/i FMIPA UNTAN mun bingung nak mengedit foto 4x6 ye. mun dah tau tak ape tak pake itok aman men.
+        Dibuat untokkan bantok mahasiswa/i FMIPA UNTAN mun bingung nak mengedit foto 4x6 ye. mun dah tau tak ape, daan pake itokpun aman men.
       </footer>
     </div>
   );
