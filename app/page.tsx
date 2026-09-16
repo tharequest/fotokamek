@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <header className="border-b-[3px] border-ink bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <Image
   src="/logofotokamek.png"
   alt="FotoKamek"
@@ -54,7 +54,7 @@ export default function Home() {
   priority
 />
           <span className="hidden text-xs font-semibold text-ink/50 sm:inline">
-            untokkan mahasiswa FMIPA UNTAN
+            Untokkan Mahasiswa FMIPA Untan 😁
           </span>
         </div>
       </header>
