@@ -123,7 +123,7 @@ export default function Home() {
           mun dah tau tak ape, daan pake itokpun aman men.
         </p>
         <a
-           href="https://wa.me/085787908406"
+           href="https://wa.me/6285787908406"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-3 inline-flex items-center gap-1.5 font-semibold text-ink underline underline-offset-2"
