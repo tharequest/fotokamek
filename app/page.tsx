@@ -46,13 +46,13 @@ export default function Home() {
       <header className="border-b-[3px] border-ink bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <Image
-  src="/logofotokamek.png"
-  alt="FotoKamek"
-  width={200}
-  height={80}
-  className="h-12 w-auto sm:h-14"
-  priority
-/>
+            src="/logofotokamek.png"
+            alt="FotoKamek"
+            width={200}
+            height={80}
+            className="h-12 w-auto sm:h-14"
+            priority
+          />
           <span className="hidden text-xs font-semibold text-ink/50 sm:inline">
             Untokkan Mahasiswa FMIPA Untan 😁
           </span>
@@ -117,9 +117,29 @@ export default function Home() {
       </main>
 
       <footer className="border-t-[3px] border-ink py-6 text-center text-xs text-ink/50">
-        Dibuat untokkan bantok mahasiswa/i FMIPA UNTAN mun bingung nak mengedit foto 4x6 ye. mun dah tau tak ape, daan pake itokpun aman men.
+        <p>
+          © 2026 Akademik dan Kemahasiswaan FMIPA Untan - Dibuat untokkan bantok mahasiswa/i FMIPA yang mane die bingung nak mengedit foto 4x6 ye.
+          mun dah tau tak ape, daan pake itokpun aman men.
+        </p>
+        <a
+          href="https://www.tiktok.com/@koecheng.sol"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-1.5 font-semibold text-ink underline underline-offset-2"
+        >
+          <TikTokIcon className="h-3.5 w-3.5" />
+          Kontak
+        </a>
       </footer>
     </div>
+  );
+}
+
+function TikTokIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M16.6 5.82c-.9-.9-1.4-2.12-1.4-3.4h-3.15v13.44c0 1.58-1.28 2.86-2.86 2.86a2.86 2.86 0 0 1 0-5.72c.28 0 .55.04.8.12V9.9a6.02 6.02 0 0 0-.8-.05 6.01 6.01 0 1 0 6.01 6.01V9.28a7.52 7.52 0 0 0 4.5 1.48V7.6a4.4 4.4 0 0 1-3.1-1.78Z" />
+    </svg>
   );
 }
 
