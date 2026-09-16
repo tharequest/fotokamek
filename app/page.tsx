@@ -126,10 +126,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
           className="mt-3 inline-flex items-center gap-1.5 font-semibold text-ink underline underline-offset-2"
-        >
-          <TikTokIcon className="h-3.5 w-3.5" />
-          Kontak
-        </a>
+        >Kontak</a>
       </footer>
     </div>
   );
