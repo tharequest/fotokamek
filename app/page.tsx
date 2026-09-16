@@ -50,7 +50,7 @@ export default function Home() {
   alt="FotoKamek"
   width={200}
   height={80}
-  className="h-9 w-auto"
+  className="h-12 w-auto sm:h-14"
   priority
 />
           <span className="hidden text-xs font-semibold text-ink/50 sm:inline">
