@@ -45,16 +45,14 @@ export default function Home() {
     <div className="min-h-screen">
       <header className="border-b-[3px] border-ink bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-2.5">
-            <Image
-              src="/logofotokamek.png"
-              alt="Logo Fotokamek"
-              width={36}
-              height={36}
-              className="rounded-xl border-[3px] border-ink"
-          />
-            <span className="font-display text-lg font-bold text-ink">FotoKamek</span>
-          </div>
+          <Image
+  src="/logofotokamek.png"
+  alt="FotoKamek"
+  width={200}
+  height={80}
+  className="h-9 w-auto"
+  priority
+/>
           <span className="hidden text-xs font-semibold text-ink/50 sm:inline">
             untokkan mahasiswa FMIPA UNTAN
           </span>
