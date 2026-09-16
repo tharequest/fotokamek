@@ -85,7 +85,7 @@ export default function Home() {
                 icon={<ScanFace className="h-5 w-5 text-ink" strokeWidth={2.5} />}
                 color="bg-lime"
                 title="Auto deteksi muke kitak"
-                desc="Posisi same crop awal diatur otomatis dari muke mu."
+                desc="Posisi same crop awal diatur otomatis dari mukenye."
               />
               <FeatureCard
                 icon={<MousePointerClick className="h-5 w-5 text-ink" strokeWidth={2.5} />}
