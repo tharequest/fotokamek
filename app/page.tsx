@@ -45,14 +45,15 @@ export default function Home() {
     <div className="min-h-screen">
       <header className="border-b-[3px] border-ink bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <Image
+          {/* <Image
             src="/logofotokamek.png"
             alt="FotoKamek"
             width={200}
             height={80}
             className="h-12 w-auto sm:h-14"
             priority
-          />
+          /> */}
+          <span className="font-display text-lg font-bold text-ink">FotoKamek</span>
           <span className="hidden text-xs font-semibold text-ink/50 sm:inline">
             Untokkan Mahasiswa FMIPA Untan 😁
           </span>
