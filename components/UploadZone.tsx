@@ -64,7 +64,7 @@ export default function UploadZone({ onFileSelected }: UploadZoneProps) {
         Landscape, potret, ukuran ape ajak - semue bise. Format JPG / PNG.
       </p>
 
-      <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-paper block-shadow-hover">
+      <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-paper block-shadow-hover-violet">
         <ImagePlus className="h-4 w-4" strokeWidth={2.5} />
         Pilih Fotonye
       </div>

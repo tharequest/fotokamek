@@ -117,17 +117,37 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="border-t-[3px] border-ink py-4 text-center text-xs text-ink/50">
-        <p>
-          © 2026 Akademik dan Kemahasiswaan FMIPA Untan - Dibuat untokkan bantok mahasiswa/i FMIPA yang mane die bingung nak mengedit foto 4x6 ye.
-          mun dah tau tak ape, daan pake itokpun aman men.
-        </p>
-        <a
-          href="https://wa.me/6285787908406?text=Halo%20mau%20tanya%20tentang%20FotoKamek?"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center gap-1.5 font-semibold text-ink underline underline-offset-2"
-        >Kontak</a>
+      <footer className="border-t-[3px] border-ink py-6 text-xs text-ink/50">
+        <div className="mx-auto max-w-3xl px-5">
+          <div className="flex items-start justify-between gap-4 border-b border-ink/10 pb-4">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logo-untan.png"
+                alt="Universitas Tanjungpura"
+                width={32}
+                height={32}
+                className="h-8 w-8"
+              />
+              <div className="text-left leading-tight">
+                <p className="text-[11px] font-bold tracking-wide text-yellow-400">FMIPA Untan</p>
+                <p className="text-xs font-semibold text-ink">Akademik &amp; Kemahasiswaan</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="mb-1 text-[10px] font-bold tracking-wide text-ink/40">Kontak</p>
+              <a
+                href="https://wa.me/6285787908406?text=Halo%20mau%20tanya%20tentang%20FotoKamek?"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-ink underline underline-offset-2"
+              >whatsapp</a>
+            </div>
+          </div>
+          <p className="mt-4 text-center">
+            © 2026 Akademik dan Kemahasiswaan FMIPA Untan - Dibuat untokkan bantok mahasiswa/i FMIPA yang mane die bingung nak mengedit foto 4x6 ye.
+            mun dah tau tak ape, daan pake itokpun aman men.
+          </p>
+        </div>
       </footer>
     </div>
   );

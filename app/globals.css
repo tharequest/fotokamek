@@ -61,6 +61,29 @@ h1, h2, h3, .font-display {
   }
 }
 
+/* Same neo-brutalist shadow, but with a violet shadow color instead of
+   ink/black — used where a hover accent should stand out more. */
+.block-shadow-hover-violet {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.block-shadow-hover-violet:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 0 var(--color-violet);
+}
+.block-shadow-hover-violet:active {
+  transform: translate(0, 0);
+  box-shadow: 3px 3px 0 0 var(--color-violet);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block-shadow-hover-violet,
+  .block-shadow-hover-violet:hover,
+  .block-shadow-hover-violet:active {
+    transition: none;
+    transform: none;
+  }
+}
+
 /* react-easy-crop container needs an explicit stacking context */
 .crop-container {
   position: relative;
