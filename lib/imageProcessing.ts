@@ -3,6 +3,13 @@ import type { FaceBox } from "./faceDetect";
 /** True physical ratio of a 4x6 cm photo, width / height. */
 export const PHOTO_ASPECT = 4 / 6;
 
+/** How much extra width (beyond the exact 4:6 ratio) the auto-crop
+ * extraction keeps around the face, so there's real image outside the
+ * frame to pan left/right. Height stays locked to the face detection —
+ * only width gets this breathing room. 1.4 = ~20% extra canvas visible
+ * on each side at zoom 1. */
+const AUTO_CROP_WIDTH_PADDING = 1.4;
+
 /** High-resolution digital output (bigger than needed — the campus
  * system compresses on its end, so we oversample for a clean result). */
 export const SINGLE_OUTPUT_WIDTH = 1200;
@@ -29,7 +36,8 @@ export function loadImageElement(src: string): Promise<HTMLImageElement> {
 }
 
 /** Clamp a crop rectangle so it stays inside the source image, keeping
- * the 4:6 aspect ratio intact. */
+ * the 4:6 aspect ratio intact. Used for rects that MUST end up exactly
+ * at PHOTO_ASPECT (the no-face fallback path). */
 function clampCropRect(rect: Rect, imgW: number, imgH: number): Rect {
   let { x, y, width, height } = rect;
 
@@ -50,11 +58,37 @@ function clampCropRect(rect: Rect, imgW: number, imgH: number): Rect {
   return { x, y, width, height };
 }
 
+/** Clamp a WIDENED crop rect (wider than PHOTO_ASPECT on purpose) so it
+ * stays inside the source image. Height (the locked dimension, driven by
+ * face detection) is only ever shrunk as a last resort if the source
+ * image itself is shorter than the computed crop — width is capped
+ * independently so a narrow source photo doesn't silently override the
+ * vertical framing that already matched the face. */
+function clampWidenedRect(rect: Rect, imgW: number, imgH: number): Rect {
+  let { x, y, width, height } = rect;
+
+  if (height > imgH) {
+    const scale = imgH / height;
+    height = imgH;
+    width = width * scale;
+  }
+  if (width > imgW) {
+    width = imgW;
+  }
+
+  x = Math.min(Math.max(x, 0), imgW - width);
+  y = Math.min(Math.max(y, 0), imgH - height);
+
+  return { x, y, width, height };
+}
+
 /**
  * Computes a sensible starting crop for an ID-style half-body photo.
  * If a face box is available, the crop is built around it (headroom on
- * top, room for shoulders/chest below). Otherwise falls back to a
- * center-biased crop matching the 4:6 aspect ratio.
+ * top, room for shoulders/chest below), with EXTRA width padding so the
+ * interactive cropper has real image to pan through horizontally while
+ * the vertical framing stays locked. Otherwise falls back to a
+ * center-biased crop matching the 4:6 aspect ratio exactly.
  */
 export function computeAutoCropRect(
   imgW: number,
@@ -65,14 +99,16 @@ export function computeAutoCropRect(
     const desiredFaceHeightRatio = 0.32; // face height vs crop height
     const topMarginRatio = 0.16; // headroom above the head
 
-    let cropHeight = face.height / desiredFaceHeightRatio;
-    let cropWidth = cropHeight * PHOTO_ASPECT;
+    // tinggi: dikunci berdasarkan deteksi wajah, TIDAK berubah
+    const cropHeight = face.height / desiredFaceHeightRatio;
+    // lebar: sengaja dilebihin biar ada sisa buat digeser kiri-kanan
+    const cropWidth = cropHeight * PHOTO_ASPECT * AUTO_CROP_WIDTH_PADDING;
 
     const faceCenterX = face.x + face.width / 2;
-    let cropX = faceCenterX - cropWidth / 2;
-    let cropY = face.y - topMarginRatio * cropHeight;
+    const cropX = faceCenterX - cropWidth / 2;
+    const cropY = face.y - topMarginRatio * cropHeight;
 
-    return clampCropRect(
+    return clampWidenedRect(
       { x: cropX, y: cropY, width: cropWidth, height: cropHeight },
       imgW,
       imgH
@@ -81,6 +117,8 @@ export function computeAutoCropRect(
 
   // No face detected — fall back to a center-ish crop with slight
   // top bias (most portraits have more headroom below than above).
+  // Exact PHOTO_ASPECT here (no padding) since there's no reliable
+  // center to pad around without a detected face.
   const imgAspect = imgW / imgH;
   let cropWidth: number;
   let cropHeight: number;
