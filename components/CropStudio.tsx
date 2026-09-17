@@ -250,7 +250,7 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
         <div className="rounded-2xl border-[3px] border-ink bg-white p-4 text-sm block-shadow-sm">
           <p className="font-display font-semibold text-ink mb-2 flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-mint" strokeWidth={2.5} />
-            Contoh foto yang benar
+            Contoh foto yang betol
           </p>
           <div className="grid grid-cols-3 gap-2">
             <img
@@ -270,18 +270,18 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
             />
           </div>
           <p className="mt-2 text-xs text-ink/50">
-            Wajah menghadap depan, bahu simetris, badan tegak
+            Muke ngadap depan, bahu simetris, ndaan boleh pake kacemate, daan usah nampak backround di tepi bahu/tangan, yang laki² pakek dasi, yang perempuan ndaan boleh pakek  dasi, 
           </p>
         </div>
 
         <div className="rounded-2xl border-[3px] border-ink bg-white p-4 text-sm text-ink/70 block-shadow-sm">
           <p className="font-display font-semibold text-ink mb-1">Tips crop</p>
           <ul className="list-disc space-y-1 pl-4">
-            <li>Geser foto pakai jari/mouse langsung, atau slider "Posisi" buat rapiin bahu kiri-kanan</li>
+            <li>Mun nak geser foto pakai jari/mouse langsung, ade juak slider "Posisi" buat rapikan bahu kiri-kanan</li>
             <li>Pakek slider atau scroll mun nak nge-zoom</li>
-            <li>Pastikan kepalak  same bahu keliatan penuh dalam kotak</li>
+            <li>Pastikan kepalak same bahu keliatan penuh dalam kotak</li>
             {cropSource === "auto" && (
-              <li>Kalau hasil auto-crop kepotong ga pas, klik "Reset ke Foto Asli"</li>
+              <li>Kalau hasil auto-crop kepotong ndaan pas, klik "Reset ke Foto Asli"</li>
             )}
           </ul>
         </div>
@@ -292,7 +292,7 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
           className="flex items-center justify-center gap-2 rounded-full bg-violet px-6 py-3.5 font-display text-base font-semibold text-white border-[3px] border-ink block-shadow-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Wand2 className="h-5 w-5" strokeWidth={2.5} />
-          Crop Otomatis Lagi ✨
+          Crop Otomatis Agek ✨
         </button>
 
         <button
