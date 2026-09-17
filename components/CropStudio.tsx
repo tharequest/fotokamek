@@ -12,6 +12,7 @@ import {
   Wand2,
   ZoomIn,
   ImageOff,
+  CheckCircle2,
 } from "lucide-react";
 import { detectFaceBox } from "@/lib/faceDetect";
 import {
@@ -163,7 +164,7 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
         {cropSource === "original" ? (
           <div className="flex items-center gap-2 rounded-2xl border-[3px] border-ink bg-sky px-4 py-3 text-sm font-semibold text-ink block-shadow-sm">
             <ImageOff className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-            Mode manual - crop dari foto asli utuh, atur bebas dari 0
+            Mode manual — crop dari foto asli utuh, atur bebas dari 0
           </div>
         ) : (
           <>
@@ -188,6 +189,33 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
           </>
         )}
 
+        <div className="rounded-2xl border-[3px] border-ink bg-white p-4 text-sm block-shadow-sm">
+          <p className="font-display font-semibold text-ink mb-2 flex items-center gap-1.5">
+            <CheckCircle2 className="h-4 w-4 text-mint" strokeWidth={2.5} />
+            Contoh foto yang benar
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            <img
+              src="/contoh-foto-1.jpg"
+              alt="Contoh foto yang benar 1"
+              className="aspect-[2/3] w-full rounded-lg border-[2px] border-ink object-cover"
+            />
+            <img
+              src="/contoh-foto-2.jpg"
+              alt="Contoh foto yang benar 2"
+              className="aspect-[2/3] w-full rounded-lg border-[2px] border-ink object-cover"
+            />
+            <img
+              src="/contoh-foto-3.jpg"
+              alt="Contoh foto yang benar 3"
+              className="aspect-[2/3] w-full rounded-lg border-[2px] border-ink object-cover"
+            />
+          </div>
+          <p className="mt-2 text-xs text-ink/50">
+            Muke ngadap depan, bahu simetris, laki-laki pakek dasi, mun perempuan tak pakek dasi ye
+          </p>
+        </div>
+
         <div className="rounded-2xl border-[3px] border-ink bg-white p-4 text-sm text-ink/70 block-shadow-sm">
           <p className="font-display font-semibold text-ink mb-1">Tips crop</p>
           <ul className="list-disc space-y-1 pl-4">
@@ -195,7 +223,7 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
             <li>Pakek slider atau scroll mun nak nge-zoom</li>
             <li>Pastikan kepalak  same bahu keliatan penuh dalam kotak</li>
             {cropSource === "auto" && (
-              <li>Mun kelak hasil auto-crop kepotong ndaan pas, klik "Reset ke Foto Asli"</li>
+              <li>Kalau hasil auto-crop kepotong ga pas, klik "Reset ke Foto Asli"</li>
             )}
           </ul>
         </div>
