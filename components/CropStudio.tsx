@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import Cropper, { Area, MediaSize } from "react-easy-crop";
+import { useEffect, useState, useCallback } from "react";
+import Cropper, { Area } from "react-easy-crop";
 import {
   ScanFace,
   TriangleAlert,
@@ -13,8 +13,6 @@ import {
   ZoomIn,
   ImageOff,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import { detectFaceBox } from "@/lib/faceDetect";
 import {
@@ -48,42 +46,6 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Rect | null>(null);
   const [generating, setGenerating] = useState(false);
-
-  // buat hitung batas geser horizontal yang valid (rumus sama kayak dipakai
-  // react-easy-crop sendiri pas kamu drag, biar ga ninggalin area kosong)
-  const [mediaSize, setMediaSize] = useState<MediaSize | null>(null);
-  const cropBoxRef = useRef<HTMLDivElement>(null);
-  const [cropBoxWidth, setCropBoxWidth] = useState(0);
-
-  useEffect(() => {
-    if (!cropBoxRef.current) return;
-    const el = cropBoxRef.current;
-    const ro = new ResizeObserver((entries) => {
-      setCropBoxWidth(entries[0].contentRect.width);
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  function handleMediaLoaded(size: MediaSize) {
-    setMediaSize(size);
-  }
-
-  const maxPanX =
-    mediaSize && cropBoxWidth
-      ? Math.max(0, (mediaSize.width * zoom) / 2 - cropBoxWidth / 2)
-      : 0;
-
-  // kalau zoom berubah, batas geser ikut berubah — clamp posisi biar ga nyangkut di luar batas baru
-  useEffect(() => {
-    if (!mediaSize || !cropBoxWidth) return;
-    const max = Math.max(0, (mediaSize.width * zoom) / 2 - cropBoxWidth / 2);
-    setCrop((prev) => ({
-      ...prev,
-      x: Math.min(max, Math.max(-max, prev.x)),
-    }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [zoom, mediaSize, cropBoxWidth]);
 
   useEffect(() => {
     let cancelled = false;
@@ -162,20 +124,33 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
   return (
     <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
       <div className="rounded-3xl border-[3px] border-ink bg-white p-3 block-shadow">
-        <div ref={cropBoxRef} className="crop-container overflow-hidden rounded-2xl">
+        <div className="crop-container relative overflow-hidden rounded-2xl">
           {activeImage ? (
-            <Cropper
-              image={activeImage}
-              crop={crop}
-              zoom={zoom}
-              aspect={PHOTO_ASPECT}
-              cropShape="rect"
-              showGrid={true}
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={onCropComplete}
-              onMediaLoaded={handleMediaLoaded}
-            />
+            <>
+              <Cropper
+                image={activeImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={PHOTO_ASPECT}
+                cropShape="rect"
+                showGrid={true}
+                objectFit={cropSource === "original" ? "contain" : "cover"}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+              />
+              {/* garis panduan batas kepala atas — dekoratif, ga ikut kegeser/kezoom,
+                  cuma patokan visual buat naik-turunin foto */}
+              <div
+                className="pointer-events-none absolute inset-x-0 z-10 flex items-center gap-1.5"
+                style={{ top: "8%" }}
+              >
+                <span className="whitespace-nowrap rounded-full border-[2px] border-ink bg-white px-2 py-0.5 text-[10px] font-semibold text-ink shadow-pop-sm">
+                  Batas kepala atas
+                </span>
+                <div className="h-0 flex-1 border-t-2 border-dashed border-white/90" />
+              </div>
+            </>
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-3 text-ink/60">
               <Loader2 className="h-8 w-8 animate-spin text-violet" />
@@ -195,25 +170,6 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
             onChange={(e) => setZoom(Number(e.target.value))}
             className="h-2 w-full cursor-pointer appearance-none rounded-full bg-ink/10 accent-violet"
             aria-label="Zoom"
-          />
-        </div>
-
-        <div className="mt-3 flex items-center gap-3 px-1">
-          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-ink/50">
-            <ChevronLeft className="h-3.5 w-3.5" /> Posisi <ChevronRight className="h-3.5 w-3.5" />
-          </span>
-          <input
-            type="range"
-            min={-maxPanX}
-            max={maxPanX}
-            step={0.5}
-            value={crop.x}
-            onChange={(e) =>
-              setCrop((prev) => ({ ...prev, x: Number(e.target.value) }))
-            }
-            disabled={!mediaSize || maxPanX === 0}
-            className="h-2 w-full cursor-pointer appearance-none rounded-full bg-ink/10 accent-coral disabled:opacity-40"
-            aria-label="Geser posisi horizontal"
           />
         </div>
       </div>
@@ -250,7 +206,7 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
         <div className="rounded-2xl border-[3px] border-ink bg-white p-4 text-sm block-shadow-sm">
           <p className="font-display font-semibold text-ink mb-2 flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-mint" strokeWidth={2.5} />
-            Contoh foto yang betol
+            Contoh foto yang benar
           </p>
           <div className="grid grid-cols-3 gap-2">
             <img
@@ -270,18 +226,19 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
             />
           </div>
           <p className="mt-2 text-xs text-ink/50">
-            Muke ngadap depan, bahu simetris, ndaan boleh pake kacemate, daan usah nampak backround di tepi bahu/tangan, yang laki² pakek dasi, yang perempuan ndaan boleh pakek  dasi, 
+            Wajah menghadap depan, bahu simetris, badan tegak
           </p>
         </div>
 
         <div className="rounded-2xl border-[3px] border-ink bg-white p-4 text-sm text-ink/70 block-shadow-sm">
           <p className="font-display font-semibold text-ink mb-1">Tips crop</p>
           <ul className="list-disc space-y-1 pl-4">
-            <li>Mun nak geser foto pakai jari/mouse langsung, ade juak slider "Posisi" buat rapikan bahu kiri-kanan</li>
-            <li>Pakek slider atau scroll mun nak nge-zoom</li>
+            <li>Geser foto ke segala arah pakai jari/mouse langsung di atas fotonya</li>
+            <li>Pakek slider zoom kalau butuh ruang lebih buat digeser</li>
+            <li>Pas-in bagian atas kepala pas/dikit di bawah garis putus-putus "Batas kepala atas"</li>
             <li>Pastikan kepalak same bahu keliatan penuh dalam kotak</li>
             {cropSource === "auto" && (
-              <li>Kalau hasil auto-crop kepotong ndaan pas, klik "Reset ke Foto Asli"</li>
+              <li>Kalau hasil auto-crop kepotong ga pas, klik "Reset ke Foto Asli"</li>
             )}
           </ul>
         </div>
@@ -292,7 +249,7 @@ export default function CropStudio({ imageSrc, onConfirm, onChangePhoto }: CropS
           className="flex items-center justify-center gap-2 rounded-full bg-violet px-6 py-3.5 font-display text-base font-semibold text-white border-[3px] border-ink block-shadow-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Wand2 className="h-5 w-5" strokeWidth={2.5} />
-          Crop Otomatis Agek ✨
+          Crop Otomatis Lagi ✨
         </button>
 
         <button

@@ -84,10 +84,16 @@ h1, h2, h3, .font-display {
   }
 }
 
-/* react-easy-crop container needs an explicit stacking context */
+/* react-easy-crop container needs an explicit stacking context.
+   IMPORTANT: this must stay locked to the real 4x6 ratio (2/3) — the
+   library computes its cover/contain math from this box's ACTUAL
+   rendered shape, not from the `aspect` prop passed to <Cropper>. A
+   mismatch here (e.g. a fixed pixel height) makes the image render at
+   the wrong scale and get cropped incorrectly once objectFit="cover"
+   is used. */
 .crop-container {
   position: relative;
   width: 100%;
-  height: 420px;
+  aspect-ratio: 2 / 3;
   background: repeating-conic-gradient(#efeaff 0% 25%, #f6f3ff 0% 50%) 50% / 24px 24px;
 }

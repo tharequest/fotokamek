@@ -10,6 +10,12 @@ export const PHOTO_ASPECT = 4 / 6;
  * on each side at zoom 1. */
 const AUTO_CROP_WIDTH_PADDING = 1.4;
 
+/** Same idea but vertical — a bit of extra height beyond the face-driven
+ * calculation, so there's slack to nudge the crop up/down too (not just
+ * left/right) without needing to zoom in first. Kept modest so the
+ * headroom-above-head framing doesn't drift too far from the target. */
+const AUTO_CROP_HEIGHT_PADDING = 1.18;
+
 /** High-resolution digital output (bigger than needed — the campus
  * system compresses on its end, so we oversample for a clean result). */
 export const SINGLE_OUTPUT_WIDTH = 1200;
@@ -85,10 +91,11 @@ function clampWidenedRect(rect: Rect, imgW: number, imgH: number): Rect {
 /**
  * Computes a sensible starting crop for an ID-style half-body photo.
  * If a face box is available, the crop is built around it (headroom on
- * top, room for shoulders/chest below), with EXTRA width padding so the
- * interactive cropper has real image to pan through horizontally while
- * the vertical framing stays locked. Otherwise falls back to a
- * center-biased crop matching the 4:6 aspect ratio exactly.
+ * top, room for shoulders/chest below), with extra width AND a smaller
+ * extra height padding so the interactive cropper has real image to pan
+ * through in both directions, without needing to zoom in first.
+ * Otherwise falls back to a center-biased crop matching the 4:6 aspect
+ * ratio exactly.
  */
 export function computeAutoCropRect(
   imgW: number,
@@ -99,14 +106,19 @@ export function computeAutoCropRect(
     const desiredFaceHeightRatio = 0.32; // face height vs crop height
     const topMarginRatio = 0.16; // headroom above the head
 
-    // tinggi: dikunci berdasarkan deteksi wajah, TIDAK berubah
-    const cropHeight = face.height / desiredFaceHeightRatio;
+    // tinggi: dikunci ngikutin deteksi wajah, dikasih sedikit ekstra
+    // biar ada ruang buat digeser atas-bawah juga
+    const baseCropHeight = face.height / desiredFaceHeightRatio;
+    const cropHeight = baseCropHeight * AUTO_CROP_HEIGHT_PADDING;
     // lebar: sengaja dilebihin biar ada sisa buat digeser kiri-kanan
     const cropWidth = cropHeight * PHOTO_ASPECT * AUTO_CROP_WIDTH_PADDING;
 
     const faceCenterX = face.x + face.width / 2;
     const cropX = faceCenterX - cropWidth / 2;
-    const cropY = face.y - topMarginRatio * cropHeight;
+    // headroom dihitung dari tinggi DASAR (sebelum padding), lalu sisa
+    // padding dibagi rata ke atas & bawah biar wajah tetep di posisi wajar
+    const extraHeight = cropHeight - baseCropHeight;
+    const cropY = face.y - topMarginRatio * baseCropHeight - extraHeight / 2;
 
     return clampWidenedRect(
       { x: cropX, y: cropY, width: cropWidth, height: cropHeight },
